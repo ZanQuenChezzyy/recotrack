@@ -10,7 +10,8 @@ class UserType extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama',
+        'user_id',
+        'type_id',
     ];
 }
 

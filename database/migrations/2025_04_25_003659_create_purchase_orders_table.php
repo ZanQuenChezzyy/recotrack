@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
-            $table->varchar('number', 12)->unique();
+            $table->string('number', 12)->unique();
             $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();
             $table->foreignId('ship_id')->constrained('ships')->cascadeOnDelete();
             $table->foreignId('material_id')->constrained('materials')->cascadeOnDelete();

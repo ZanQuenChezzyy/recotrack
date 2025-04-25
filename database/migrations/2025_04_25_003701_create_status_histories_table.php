@@ -13,8 +13,9 @@ return new class extends Migration {
         Schema::create('status_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('receiving_log_id')->constrained('receiving_logs')->cascadeOnDelete();
-            $table->unsignedTinyInteger('staus')->default(2);
+            $table->unsignedTinyInteger('status')->default(2);
             $table->date('status_date');
+            $table->boolean('is_done')->default(false);
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });

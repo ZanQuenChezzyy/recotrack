@@ -10,7 +10,17 @@ class Material extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama',
+        'type_id',
+        'name',
+        'description',
     ];
-}
 
+    public function purchaseOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\PurchaseOrder::class);
+    }
+    public function types(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Type::class, 'type_id', 'id');
+    }
+}

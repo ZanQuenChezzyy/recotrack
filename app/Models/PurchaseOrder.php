@@ -10,7 +10,26 @@ class PurchaseOrder extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama',
+        'number',
+        'material_id',
+        'vendor_id',
+        'ship_id',
     ];
-}
 
+    public function receivingLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\ReceivingLog::class);
+    }
+    public function vendors(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Vendor::class, 'vendor_id', 'id');
+    }
+    public function ships(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Ship::class, 'ship_id', 'id');
+    }
+    public function materials(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Material::class, 'material_id', 'id');
+    }
+}

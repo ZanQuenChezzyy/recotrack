@@ -10,7 +10,17 @@ class Uom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama',
+        'code',
+        'type_id',
+        'description',
     ];
-}
 
+    public function types(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Type::class, 'type_id', 'id');
+    }
+    public function receivingLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\ReceivingLog::class);
+    }
+}

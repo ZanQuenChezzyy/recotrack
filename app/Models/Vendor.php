@@ -10,7 +10,10 @@ class Vendor extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama',
+        'name',
     ];
+    public function purchaseOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\PurchaseOrder::class);
+    }
 }
-

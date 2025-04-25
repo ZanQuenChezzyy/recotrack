@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('uoms', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 45)->unique();
+            $table->string('code', 10)->unique();
             $table->foreignId('type_id')->constrained('types')->cascadeOnDelete();
             $table->text('description')->nullable();
             $table->timestamps();
