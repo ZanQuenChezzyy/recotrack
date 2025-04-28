@@ -4,17 +4,16 @@ namespace App\Filament\Resources\PurchaseOrderResource\Pages;
 
 use App\Filament\Resources\PurchaseOrderResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ManageRecords;
 
-class EditPurchaseOrder extends EditRecord
+class ManagePurchaseOrders extends ManageRecords
 {
     protected static string $resource = PurchaseOrderResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

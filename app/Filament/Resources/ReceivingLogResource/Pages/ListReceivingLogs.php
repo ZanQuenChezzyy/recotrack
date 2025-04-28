@@ -4,9 +4,9 @@ namespace App\Filament\Resources\ReceivingLogResource\Pages;
 
 use App\Filament\Resources\ReceivingLogResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\ListRecords;
 
-class ManageReceivingLogs extends ManageRecords
+class ListReceivingLogs extends ListRecords
 {
     protected static string $resource = ReceivingLogResource::class;
 

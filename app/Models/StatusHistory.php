@@ -14,13 +14,7 @@ class StatusHistory extends Model
         'status',
         'status_date',
         'is_done',
-        'created_by',
     ];
-
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
-    }
     public function receivingLogs(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\ReceivingLog::class, 'receiving_log_id', 'id');

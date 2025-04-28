@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->unsignedTinyInteger('status')->default(2);
             $table->date('status_date');
             $table->boolean('is_done')->default(false);
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
