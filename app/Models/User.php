@@ -56,6 +56,6 @@ class User extends Authenticatable implements HasAvatar
     }
     public function types(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Type::class, 'user_type', 'user_id', 'type_id');
+        return $this->belongsToMany(\App\Models\Type::class, 'user_types', 'user_id', 'type_id');
     }
 }

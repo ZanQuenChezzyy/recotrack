@@ -32,7 +32,7 @@ class PermissionResource extends Resource
     protected static ?string $label = 'Kelola Perizinan';
     protected static ?string $navigationIcon = 'heroicon-o-key';
     protected static ?string $activeNavigationIcon = 'heroicon-s-key';
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 1;
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
     public static function getNavigationBadge(): ?string
     {

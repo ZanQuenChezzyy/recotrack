@@ -21,7 +21,7 @@ class ShipResource extends Resource
     protected static ?string $label = 'Kapal';
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
     protected static ?string $activeNavigationIcon = 'heroicon-s-lifebuoy';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

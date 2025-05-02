@@ -21,7 +21,7 @@ class VendorResource extends Resource
     protected static ?string $label = 'Vendor';
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static ?string $activeNavigationIcon = 'heroicon-s-building-office-2';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

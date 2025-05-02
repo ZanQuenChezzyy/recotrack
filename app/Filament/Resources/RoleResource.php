@@ -39,7 +39,7 @@ class RoleResource extends Resource
     protected static ?string $label = 'Peran Pengguna';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
     protected static ?string $activeNavigationIcon = 'heroicon-s-identification';
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 3;
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
     public static function getNavigationBadge(): ?string
