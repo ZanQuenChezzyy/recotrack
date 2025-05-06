@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ReceivingLog extends Model
 {
@@ -18,7 +19,25 @@ class ReceivingLog extends Model
         'qc_date',
         'received_date',
         'notes',
+        'created_by',
+        'updated_by',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (Auth::check()) {
+                $model->created_by = Auth::id();
+                $model->updated_by = Auth::id(); // optional
+            }
+        });
+
+        static::updating(function ($model) {
+            if (Auth::check()) {
+                $model->updated_by = Auth::id();
+            }
+        });
+    }
 
     public function purchaseOrders(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -32,4 +51,16 @@ class ReceivingLog extends Model
     {
         return $this->belongsTo(\App\Models\Uom::class, 'uom_id', 'id');
     }
+
+    public function createdBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+    }
+
+
+    public function updatedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'updated_by', 'id');
+    }
+
 }

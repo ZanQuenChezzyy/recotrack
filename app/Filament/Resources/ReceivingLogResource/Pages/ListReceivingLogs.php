@@ -62,36 +62,26 @@ class ListReceivingLogs extends ListRecords
 
         // 5. Buat Tab untuk setiap Material yang relevan
         foreach ($relevantMaterials as $material) {
-            // Hitung jumlah ReceivingLog untuk material ini
-            // Query ini mirip dengan yang ada di modifyQueryUsing, tapi melakukan count()
-            $count = ReceivingLog::query()
-                ->whereHas('purchaseOrders', function (Builder $poQuery) use ($material) {
-                    // Pastikan nama kolom 'material_id' di tabel 'purchase_orders' sudah benar
-                    $poQuery->where('material_id', $material->id);
+            $count = ReceivingLog::whereHas('purchaseOrders', function (Builder $poQuery) use ($material) {
+                $poQuery->where('material_id', $material->id);
+            })
+                // Tambahkan filter: hanya hitung ReceivingLog yang TIDAK memiliki statusHistory is_done = true
+                ->whereDoesntHave('statusHistories', function (Builder $statusQuery) {
+                    $statusQuery->where('is_done', true);
                 })
                 ->count();
 
-            // Buat slug unik dari nama material + ID untuk menghindari duplikasi jika nama sama
             $slug = Str::slug($material->name) . '-' . $material->id;
 
-            // Tambahkan Tab baru ke array $tabs
-            $tabs[$slug] = Tab::make($material->name) // Gunakan nama Material sebagai label Tab
-                ->badge($count) // <-- Modifikasi: Tampilkan hasil count sebagai badge
+            $tabs[$slug] = Tab::make($material->name)
+                ->badge($count)
                 ->modifyQueryUsing(function (Builder $query) use ($material) {
-                    // Filter query utama (ReceivingLog)
-                    // Cari ReceivingLog yang memiliki relasi 'purchaseOrders'
-                    // dimana 'purchaseOrders' tersebut memiliki 'material_id'
-                    // yang sama dengan ID material dari tab ini ($material->id)
-    
                     $query->whereHas('purchaseOrders', function (Builder $poQuery) use ($material) {
-                        // Pastikan nama kolom 'material_id' di tabel 'purchase_orders' sudah benar
                         $poQuery->where('material_id', $material->id);
-                    });
-
-                    // --- CATATAN PENTING ---
-                    // Pastikan relasi di model Anda sudah benar:
-                    // 1. ReceivingLog -> purchaseOrders(): BelongsTo App\Models\PurchaseOrder::class
-                    // 2. PurchaseOrder -> HARUS punya kolom 'material_id'
+                    })
+                        ->whereDoesntHave('statusHistories', function (Builder $statusQuery) {
+                            $statusQuery->where('is_done', true);
+                        });
                 });
         }
 

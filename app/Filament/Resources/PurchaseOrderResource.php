@@ -7,6 +7,7 @@ use App\Filament\Resources\PurchaseOrderResource\Pages;
 use App\Filament\Resources\PurchaseOrderResource\RelationManagers;
 use App\Models\PurchaseOrder;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -39,19 +40,62 @@ class PurchaseOrderResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('number')
-                    ->label('Purchase Order')
-                    ->placeholder('Masukkan Purchase Order')
+                    ->label('Nomor PO')
+                    ->placeholder('Masukkan Nomor PO')
                     ->required()
                     ->maxLength(12),
-                Forms\Components\TextInput::make('vendor_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('ship_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('material_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('vendor_id')
+                    ->label('Vendor')
+                    ->relationship('vendors', 'name')
+                    ->native(false)
+                    ->preload()
+                    ->searchable()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->label('Nama')
+                            ->placeholder('Masukkan Nama')
+                            ->minLength(3)
+                            ->maxLength(45)
+                            ->required(),
+                    ])
+                    ->required(),
+                Forms\Components\Select::make('ship_id')
+                    ->label('Kapal (Opsional)')
+                    ->relationship('ships', 'name')
+                    ->native(false)
+                    ->preload()
+                    ->searchable()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->label('Nama Kapal')
+                            ->placeholder('Masukkan Nama')
+                            ->minLength(3)
+                            ->maxLength(45)
+                            ->required(),
+                    ]),
+                Forms\Components\Select::make('material_id')
+                    ->label('Material')
+                    ->relationship('materials', 'name')
+                    ->native(false)
+                    ->preload()
+                    ->searchable()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->label('Nama')
+                            ->placeholder('Masukkan Nama')
+                            ->minLength(3)
+                            ->maxLength(45)
+                            ->required(),
+                        Forms\Components\Select::make('type_id')
+                            ->label('Tipe Material')
+                            ->placeholder('Pilih Tipe Material')
+                            ->relationship('types', 'name')
+                            ->native(false)
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->required(),
             ]);
     }
 
