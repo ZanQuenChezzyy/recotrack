@@ -13,5 +13,16 @@ class UserType extends Model
         'user_id',
         'type_id',
     ];
-}
 
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
+    }
+
+
+    public function types(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Type::class, 'type_id', 'id');
+    }
+
+}

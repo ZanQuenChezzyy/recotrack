@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -54,10 +55,6 @@ class User extends Authenticatable implements HasAvatar
     {
         return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
-    public function types(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\Type::class, 'user_types', 'user_id', 'type_id');
-    }
 
     public function createdBy(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
@@ -67,6 +64,12 @@ class User extends Authenticatable implements HasAvatar
     public function updatedBy(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\App\Models\ReceivingLog::class);
+    }
+
+
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(Type::class, 'user_types', 'user_id', 'type_id');
     }
 
 }

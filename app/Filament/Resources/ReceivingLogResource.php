@@ -18,6 +18,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -83,6 +84,14 @@ class ReceivingLogResource extends Resource
                                                     ->maxLength(45)
                                                     ->required(),
                                             ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ])
                                             ->required(),
                                         Forms\Components\Select::make('ship_id')
                                             ->label('Kapal (Opsional)')
@@ -93,6 +102,14 @@ class ReceivingLogResource extends Resource
                                             ->createOptionForm([
                                                 TextInput::make('name')
                                                     ->label('Nama Kapal')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
                                                     ->placeholder('Masukkan Nama')
                                                     ->minLength(3)
                                                     ->maxLength(45)
@@ -120,61 +137,151 @@ class ReceivingLogResource extends Resource
                                                     ->searchable()
                                                     ->required(),
                                             ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                                Forms\Components\Select::make('type_id')
+                                                    ->label('Tipe Material')
+                                                    ->placeholder('Pilih Tipe Material')
+                                                    ->relationship('types', 'name')
+                                                    ->native(false)
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->required(),
+                                            ])
+                                            ->required(),
+                                    ])->columns(2)
+                                ])
+                                ->editOptionForm([
+                                    Group::make([
+                                        Forms\Components\TextInput::make('number')
+                                            ->label('Nomor PO')
+                                            ->placeholder('Masukkan Nomor PO')
+                                            ->required()
+                                            ->maxLength(12),
+                                        Forms\Components\Select::make('vendor_id')
+                                            ->label('Vendor')
+                                            ->relationship('vendors', 'name')
+                                            ->native(false)
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ])
+                                            ->required(),
+                                        Forms\Components\Select::make('ship_id')
+                                            ->label('Kapal (Opsional)')
+                                            ->relationship('ships', 'name')
+                                            ->native(false)
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama Kapal')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                            ]),
+                                        Forms\Components\Select::make('material_id')
+                                            ->label('Material')
+                                            ->relationship('materials', 'name')
+                                            ->native(false)
+                                            ->preload()
+                                            ->searchable()
+                                            ->createOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                                Forms\Components\Select::make('type_id')
+                                                    ->label('Tipe Material')
+                                                    ->placeholder('Pilih Tipe Material')
+                                                    ->relationship('types', 'name')
+                                                    ->native(false)
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->required(),
+                                            ])
+                                            ->editOptionForm([
+                                                TextInput::make('name')
+                                                    ->label('Nama')
+                                                    ->placeholder('Masukkan Nama')
+                                                    ->minLength(3)
+                                                    ->maxLength(45)
+                                                    ->required(),
+                                                Forms\Components\Select::make('type_id')
+                                                    ->label('Tipe Material')
+                                                    ->placeholder('Pilih Tipe Material')
+                                                    ->relationship('types', 'name')
+                                                    ->native(false)
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->required(),
+                                            ])
                                             ->required(),
                                     ])->columns(2)
                                 ])
                                 ->live()
                                 ->afterStateUpdated(function ($state, callable $set) {
-                                    $uomIdToSet = null; // Default UOM ID adalah null
-                        
-                                    if ($state) {
-                                        $purchaseOrder = PurchaseOrder::with(['vendors', 'ships', 'materials'])->find($state);
+                                    $uomIdToSet = null;
 
-                                        if ($purchaseOrder) {
-                                            // Set field-field detail PO (vendor, ship, material)
+                                    if ($state) {
+                                        $purchaseOrder = PurchaseOrder::with('materials')->find($state);
+
+                                        if ($purchaseOrder && $purchaseOrder->materials) {
+                                            $materialTypeId = $purchaseOrder->materials->type_id;
+
+                                            // Cari UOM pertama yang punya type_id yang sama
+                                            $matchingUom = Uom::where('type_id', $materialTypeId)->first();
+                                            if ($matchingUom) {
+                                                $uomIdToSet = $matchingUom->id;
+                                            }
+
+                                            // Set nilai default field lain jika diperlukan
                                             $set('vendor', $purchaseOrder->vendors?->name ?? '');
                                             $set('ship', $purchaseOrder->ships?->name ?? '');
-                                            $set('material', $purchaseOrder->materials?->name ?? '');
-
-                                            // --- Logika untuk menentukan dan set UOM ---
-                                            $materialTypeId = $purchaseOrder->materials?->type_id;
-                                            $requiredUomCode = null;
-
-                                            if ($materialTypeId === 1) {
-                                                $requiredUomCode = 'EA';
-                                            } elseif ($materialTypeId === 2) {
-                                                $requiredUomCode = 'TON';
-                                            }
-                                            // Tambahkan kondisi lain jika ada tipe material lain
-                                            // elseif ($materialTypeId === 3) {
-                                            //     $requiredUomCode = 'XYZ';
-                                            // }
-                        
-                                            // Jika kode UOM yang dibutuhkan ketemu, cari ID-nya
-                                            if ($requiredUomCode) {
-                                                $matchingUom = Uom::where('code', $requiredUomCode)->first(['id']); // Ambil ID saja
-                                                if ($matchingUom) {
-                                                    $uomIdToSet = $matchingUom->id; // Dapatkan ID UOM yang cocok
-                                                }
-                                            }
-                                            // --- Akhir Logika UOM ---
-                        
+                                            $set('material', $purchaseOrder->materials->name ?? '');
                                         } else {
-                                            // PO tidak ditemukan
+                                            // Clear jika tidak ada PO
                                             $set('vendor', '');
                                             $set('ship', '');
                                             $set('material', '');
                                         }
                                     } else {
-                                        // PO dikosongkan
                                         $set('vendor', '');
                                         $set('ship', '');
                                         $set('material', '');
                                     }
 
-                                    // Set nilai uom_id di akhir, baik null maupun ID yang ditemukan
                                     $set('uom_id', $uomIdToSet);
-
                                 })
                                 ->native(false)
                                 ->preload()
@@ -186,9 +293,6 @@ class ReceivingLogResource extends Resource
                                         $selectedPoId = $get('purchase_order_id'); // Ambil ID PO yang dipilih di form
                             
                                         if ($selectedPoId) {
-                                            // --- Ada PO dipilih di form ---
-                                            // Ambil nama material berdasarkan PO ID terpilih.
-                                            // Gunakan cache agar tidak query berulang kali jika form refresh.
                                             $materialName = Cache::remember("po_{$selectedPoId}_material_name", now()->addMinutes(2), function () use ($selectedPoId) {
                                                 // Anda bisa optimasi query ini jika perlu
                                                 $po = PurchaseOrder::find($selectedPoId);
@@ -214,24 +318,16 @@ class ReceivingLogResource extends Resource
                                         $selectedPoId = $get('purchase_order_id'); // Ambil ID PO yang dipilih di form
                             
                                         if ($selectedPoId) {
-                                            // --- Ada PO dipilih di form ---
-                                            // Ambil nama vendor berdasarkan PO ID terpilih (gunakan cache).
                                             $vendorName = Cache::remember("po_{$selectedPoId}_vendor_name", now()->addMinutes(2), function () use ($selectedPoId) {
                                                 $po = PurchaseOrder::find($selectedPoId);
-                                                // Sesuaikan 'vendors' dengan nama relasi di model PurchaseOrder Anda
                                                 return $po?->vendors?->name;
                                             });
 
                                             return $vendorName ?? 'Tidak Ada Data Vendor (dari PO terpilih)';
 
                                         } elseif ($record?->purchase_order_id) {
-                                            // --- Tidak ada PO dipilih di form, TAPI ini mode edit & record punya PO ---
-                                            // Tampilkan data vendor awal dari record.
-                                            // Pastikan relasi purchaseOrder.vendors di-eager load untuk $record.
                                             return $record->purchaseOrder?->vendors?->name ?? 'Tidak Ada Data Vendor (dari record awal)';
-
                                         } else {
-                                            // --- Mode create atau tidak ada PO sama sekali ---
                                             return 'Tidak Ada Data Vendor';
                                         }
                                     }),
@@ -294,63 +390,80 @@ class ReceivingLogResource extends Resource
                             ->label('UOM')
                             ->placeholder('Pilih UOM')
                             ->relationship(
-                                name: 'uoms', // Nama relasi di model ReceivingLog
-                                titleAttribute: 'code', // Attribute yang ditampilkan sebagai label
-                                modifyQueryUsing: function (Builder $query, Forms\Get $get) {
-                                    $purchaseOrderId = $get('purchase_order_id');
-
-                                    // Jika PO belum dipilih, jangan tampilkan UOM apapun
-                                    if (!$purchaseOrderId) {
-                                        return $query->whereRaw('1 = 0'); // Query yang pasti tidak return hasil
+                                'uoms', // relasi ke model Uom (di ReceivingLog)
+                                'code', // field yang ditampilkan di dropdown
+                                fn($query, Forms\Get $get) => $query->when(
+                                    $get('purchase_order_id'),
+                                    function ($query, $poId) {
+                                        $purchaseOrder = PurchaseOrder::with('materials')->find($poId);
+                                        if ($purchaseOrder && $purchaseOrder->materials && $purchaseOrder->materials->type_id) {
+                                            $query->where('type_id', $purchaseOrder->materials->type_id);
+                                        }
                                     }
-
-                                    // Cari Purchase Order beserta Materialnya
-                                    // Sebaiknya gunakan eager loading jika memungkinkan di relasi utama model
-                                    $purchaseOrder = PurchaseOrder::find($purchaseOrderId);
-
-                                    // Dapatkan type_id dari material terkait PO
-                                    $materialTypeId = $purchaseOrder?->material_id ? $purchaseOrder->materials?->type_id : null;
-
-                                    // Terapkan filter berdasarkan material_type_id
-                                    if ($materialTypeId === 1) {
-                                        // Jika tipe material = 1, cari UOM dengan code 'EA'
-                                        return $query->where('code', 'EA');
-                                    } elseif ($materialTypeId === 2) {
-                                        // Jika tipe material = 2, cari UOM dengan code 'TON'
-                                        return $query->where('code', 'TON');
-                                    }
-                                    // Tambahkan kondisi lain jika ada tipe material lain
-                                    // elseif ($materialTypeId === 3) {
-                                    //    return $query->where('code', 'XYZ'); // Contoh
-                                    // }
-                                    else {
-                                        // Jika tipe material tidak dikenali atau tidak ada material,
-                                        // jangan tampilkan UOM apapun.
-                                        return $query->whereRaw('1 = 0');
-                                    }
-                                }
+                                )
                             )
                             ->disabled(fn(Forms\Get $get): bool => !$get('purchase_order_id'))
                             ->native(false)
                             ->preload()
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(fn(Set $set) => $set('quantity', '1'))
+                            ->createOptionForm([
+                                Group::make([
+                                    Forms\Components\TextInput::make('code')
+                                        ->placeholder('Masukkan Kode UOM')
+                                        ->helperText('Contoh: TON, EA, Dan Lainnya...')
+                                        ->maxLength(10)
+                                        ->required(),
+                                    Forms\Components\Select::make('type_id')
+                                        ->label('Tipe')
+                                        ->placeholder('Pilih Tipe Material')
+                                        ->relationship('types', 'name')
+                                        ->native(false)
+                                        ->preload()
+                                        ->searchable()
+                                        ->required(),
+                                    Forms\Components\Textarea::make('description')
+                                        ->label('Deskripsi')
+                                        ->placeholder('Masukkan Deskripsi')
+                                        ->helperText('Contoh: Kode UOM yang sering digunakan pada bahan baku NPK / Spareparts / Lainnya.')
+                                        ->autosize()
+                                        ->rows(3)
+                                        ->columnSpanFull(),
+                                ])->columns(2),
+                            ])
+                            ->editOptionForm([
+                                Forms\Components\TextInput::make('code')
+                                    ->placeholder('Masukkan Kode UOM')
+                                    ->helperText('Contoh: TON, EA, Dan Lainnya...')
+                                    ->maxLength(10)
+                                    ->required(),
+                                Forms\Components\Select::make('type_id')
+                                    ->label('Tipe')
+                                    ->placeholder('Pilih Tipe Material')
+                                    ->relationship('types', 'name')
+                                    ->native(false)
+                                    ->preload()
+                                    ->searchable()
+                                    ->required(),
+                                Forms\Components\Textarea::make('description')
+                                    ->label('Deskripsi')
+                                    ->placeholder('Masukkan Deskripsi')
+                                    ->helperText('Contoh: Kode UOM yang sering digunakan pada bahan baku NPK / Spareparts / Lainnya.')
+                                    ->columnSpanFull(),
+                            ]),
+
                         Forms\Components\TextInput::make('quantity')
                             ->label('Kuantitas')
                             ->placeholder('Masukkan Kuantitas')
                             ->prefix('Kuantitas')
                             ->suffix(function (Get $get): ?string {
-                                $uomId = $get('uom_id'); // Ambil ID UOM yang dipilih
-                    
+                                $uomId = $get('uom_id');
                                 if ($uomId) {
-                                    // Cari UOM berdasarkan ID.
-                                    // Pertimbangkan caching sederhana jika ini sering terpanggil & jadi isu performa.
                                     $uom = Uom::find($uomId);
-                                    // Return kode UOM jika ditemukan, jika tidak return null
                                     return $uom?->code;
                                 }
-
-                                // Jika tidak ada UOM yang dipilih, jangan tampilkan suffix
                                 return null;
                             })
                             ->required()
@@ -372,6 +485,7 @@ class ReceivingLogResource extends Resource
                                 '10' => 'Tahap 10',
                                 '11' => 'Tahap 11',
                             ])
+                            ->default(1)
                             ->native(false)
                             ->preload()
                             ->searchable()
@@ -390,13 +504,15 @@ class ReceivingLogResource extends Resource
                             ->label('Tanggal QC')
                             ->placeholder('Pilih Tanggal QC')
                             ->native(false),
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Catatan')
-                            ->placeholder('Masukkan Catatan')
-                            ->rows(4)
-                            ->columnSpan(1),
+                        Group::make([
+                            Forms\Components\Textarea::make('notes')
+                                ->label('Catatan')
+                                ->placeholder('Masukkan Catatan')
+                                ->autosize()
+                                ->rows(4)
+                                ->columnSpan(1),
+                        ]),
                         Repeater::make('statusHistories')
-                            ->relationship()
                             ->label('Riwayat Status')
                             ->schema([
                                 Forms\Components\Select::make('status')
@@ -419,6 +535,7 @@ class ReceivingLogResource extends Resource
                                     ->default(1)
                                     ->columnSpan(2)
                                     ->required(),
+
                                 Forms\Components\Toggle::make('is_done')
                                     ->label('')
                                     ->inline(false)
@@ -428,14 +545,17 @@ class ReceivingLogResource extends Resource
                                     ->onColor('success')
                                     ->offColor('danger')
                                     ->required(),
+
                                 Forms\Components\DatePicker::make('status_date')
                                     ->label('')
                                     ->placeholder('Pilih Tanggal')
-                                    ->columnSpan(4)
                                     ->native(false)
-                                    ->required(),
-                            ])->columns(7)
-                            ->columnSpan(2)
+                                    ->default(now())
+                                    ->required()
+                                    ->columnSpan(4),
+                            ])
+                            ->columns(7)
+                            ->columnSpan(2),
                     ])->columns(3)
                     ->columnSpan(2),
             ])->columns(3);

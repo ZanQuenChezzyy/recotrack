@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->unsignedMediumInteger('quantity')->default(0);
             $table->unsignedSmallInteger('stage');
             $table->date('monitoring_date');
-            $table->date('qc_date');
+            $table->date('qc_date')->nullable();
             $table->date('received_date')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();

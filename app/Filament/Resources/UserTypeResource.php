@@ -40,12 +40,21 @@ class UserTypeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('type_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('user_id')
+                    ->label('Pengguna')
+                    ->placeholder('Pilih Pengguna')
+                    ->relationship('users', 'name')
+                    ->native(false)
+                    ->preload()
+                    ->searchable()
+                    ->required(),
+                Forms\Components\Select::make('types')
+                    ->label('Tipe Material Pengguna')
+                    ->relationship('types', 'name') // dari relasi belongsToMany
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
@@ -53,10 +62,12 @@ class UserTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
+                Tables\Columns\TextColumn::make('users.name')
+                    ->label('Pengguna')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type_id')
+                Tables\Columns\TextColumn::make('types.name')
+                    ->label('Tipe')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
