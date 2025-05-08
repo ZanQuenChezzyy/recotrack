@@ -293,6 +293,9 @@ class ReceivingLogResource extends Resource
                                         $selectedPoId = $get('purchase_order_id'); // Ambil ID PO yang dipilih di form
                             
                                         if ($selectedPoId) {
+                                            // --- Ada PO dipilih di form ---
+                                            // Ambil nama material berdasarkan PO ID terpilih.
+                                            // Gunakan cache agar tidak query berulang kali jika form refresh.
                                             $materialName = Cache::remember("po_{$selectedPoId}_material_name", now()->addMinutes(2), function () use ($selectedPoId) {
                                                 // Anda bisa optimasi query ini jika perlu
                                                 $po = PurchaseOrder::find($selectedPoId);
@@ -514,6 +517,7 @@ class ReceivingLogResource extends Resource
                         ]),
                         Repeater::make('statusHistories')
                             ->label('Riwayat Status')
+                            ->relationship()
                             ->schema([
                                 Forms\Components\Select::make('status')
                                     ->label('')
