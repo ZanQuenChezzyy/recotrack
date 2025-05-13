@@ -73,29 +73,6 @@ class PurchaseOrderResource extends Resource
                             ->maxLength(45)
                             ->required(),
                     ]),
-                Forms\Components\Select::make('material_id')
-                    ->label('Material')
-                    ->relationship('materials', 'name')
-                    ->native(false)
-                    ->preload()
-                    ->searchable()
-                    ->createOptionForm([
-                        TextInput::make('name')
-                            ->label('Nama')
-                            ->placeholder('Masukkan Nama')
-                            ->minLength(3)
-                            ->maxLength(45)
-                            ->required(),
-                        Forms\Components\Select::make('type_id')
-                            ->label('Tipe Material')
-                            ->placeholder('Pilih Tipe Material')
-                            ->relationship('types', 'name')
-                            ->native(false)
-                            ->preload()
-                            ->searchable()
-                            ->required(),
-                    ])
-                    ->required(),
             ]);
     }
 
@@ -107,10 +84,6 @@ class PurchaseOrderResource extends Resource
                     ->label('Nomor Purchase Order')
                     ->placeholder('Tidak ada nomor Purchase Order')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('materials.name')
-                    ->badge()
-                    ->color('info')
-                    ->numeric(),
                 Tables\Columns\TextColumn::make('vendors.name')
                     ->label('Vendor')
                     ->placeholder('Tidak ada vendor')

@@ -15,12 +15,14 @@ class Material extends Model
         'description',
     ];
 
-    public function purchaseOrders(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\App\Models\PurchaseOrder::class);
-    }
     public function types(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\Type::class, 'type_id', 'id');
     }
+
+    public function receivingLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\ReceivingLog::class);
+    }
+
 }

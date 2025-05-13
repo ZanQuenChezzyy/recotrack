@@ -48,7 +48,7 @@ class UserTypeResource extends Resource
                     ->preload()
                     ->searchable()
                     ->required(),
-                Forms\Components\Select::make('types')
+                Forms\Components\Select::make('type_id')
                     ->label('Tipe Material Pengguna')
                     ->relationship('types', 'name') // dari relasi belongsToMany
                     ->multiple()

@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('receiving_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchase_order_id')->constrained('purchase_orders')->cascadeOnDelete();
+            $table->foreignId('material_id')->constrained('materials')->cascadeOnDelete();
             $table->foreignId('uom_id')->constrained('uoms')->cascadeOnDelete();
             $table->unsignedMediumInteger('quantity')->default(0);
             $table->unsignedSmallInteger('stage');

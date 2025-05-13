@@ -13,6 +13,7 @@ class ReceivingLog extends Model
     protected $fillable = [
         'purchase_order_id',
         'monitoring_date',
+        'material_id',
         'quantity',
         'uom_id',
         'stage',
@@ -61,6 +62,12 @@ class ReceivingLog extends Model
     public function updatedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class, 'updated_by', 'id');
+    }
+
+
+    public function materials(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Material::class, 'material_id', 'id');
     }
 
 }

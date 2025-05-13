@@ -11,7 +11,6 @@ class PurchaseOrder extends Model
 
     protected $fillable = [
         'number',
-        'material_id',
         'vendor_id',
         'ship_id',
     ];
@@ -27,9 +26,5 @@ class PurchaseOrder extends Model
     public function ships(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\Ship::class, 'ship_id', 'id');
-    }
-    public function materials(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\App\Models\Material::class, 'material_id', 'id');
     }
 }

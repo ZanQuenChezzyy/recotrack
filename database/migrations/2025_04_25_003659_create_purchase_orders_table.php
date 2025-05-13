@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->string('number', 12)->unique();
             $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();
             $table->foreignId('ship_id')->nullable()->constrained('ships')->cascadeOnDelete();
-            $table->foreignId('material_id')->constrained('materials')->cascadeOnDelete();
             $table->timestamps();
         });
     }
